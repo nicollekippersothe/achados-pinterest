@@ -20,7 +20,7 @@ MAKE_WEBHOOK_URL = os.getenv("MAKE_WEBHOOK_URL", "")
 # PINTEREST — Um único board para tudo
 # Cole a URL do board: pinterest.com/achadosdobr/nome-do-board/
 # ---------------------------------------------------------------------------
-PINTEREST_BOARD_ID = os.getenv("PINTEREST_BOARD_ID", "")
+PINTEREST_BOARD_ID = os.getenv("PINTEREST_BOARD_ID", "https://br.pinterest.com/achadosdobr/pinterest_board_beleza/")
 
 # ---------------------------------------------------------------------------
 # PRODUTOS — O que buscar automaticamente

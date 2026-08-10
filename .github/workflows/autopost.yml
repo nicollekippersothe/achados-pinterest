@@ -39,12 +39,7 @@ jobs:
           MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
           SHOPEE_AFFILIATE_ID: ${{ secrets.SHOPEE_AFFILIATE_ID }}
           ML_ETIQUETA: ${{ secrets.ML_ETIQUETA }}
-          PINTEREST_BOARD_BELEZA: ${{ secrets.PINTEREST_BOARD_BELEZA }}
-          PINTEREST_BOARD_ELETRONICO: ${{ secrets.PINTEREST_BOARD_ELETRONICO }}
-          PINTEREST_BOARD_MODA: ${{ secrets.PINTEREST_BOARD_MODA }}
-          PINTEREST_BOARD_CASA: ${{ secrets.PINTEREST_BOARD_CASA }}
-          PINTEREST_BOARD_FITNESS: ${{ secrets.PINTEREST_BOARD_FITNESS }}
-          PINTEREST_BOARD_GERAL: ${{ secrets.PINTEREST_BOARD_GERAL }}
+          PINTEREST_BOARD_ID: ${{ secrets.PINTEREST_BOARD_ID }}
         run: python autoposter.py
 
       - name: Salvar pins gerados como artefato (opcional, para debug)

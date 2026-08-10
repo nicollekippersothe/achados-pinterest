@@ -9,23 +9,13 @@ import urllib.error
 import sys
 from pathlib import Path
 
-from config import MAKE_WEBHOOK_URL, PINTEREST_BOARD_IDS
+from config import MAKE_WEBHOOK_URL, PINTEREST_BOARD_ID
 from product_fetcher import buscar_melhores_produtos
-from seo_pinterest import gerar_seo_completo, detectar_categoria
+from seo_pinterest import gerar_seo_completo
 from image_generator import gerar_pin
 from affiliate import link_afiliado
 
 
-def board_para_categoria(categoria_nome: str) -> str:
-    """Mapeia categoria detectada para o board correto do Pinterest."""
-    mapa = {
-        "beleza": PINTEREST_BOARD_IDS.get("beleza", ""),
-        "eletronico": PINTEREST_BOARD_IDS.get("eletronico", ""),
-        "moda": PINTEREST_BOARD_IDS.get("moda", ""),
-        "casa": PINTEREST_BOARD_IDS.get("casa", ""),
-        "fitness": PINTEREST_BOARD_IDS.get("fitness", ""),
-    }
-    return mapa.get(categoria_nome, PINTEREST_BOARD_IDS.get("geral", ""))
 
 
 def enviar_webhook(payload: dict) -> bool:
@@ -65,7 +55,6 @@ def processar_produto(produto: dict) -> bool:
     url_final = afiliado["url"]   # já contém MTM_CAMPAIGN=kini4438918
 
     # SEO
-    categoria = detectar_categoria(produto["nome"])
     seo = gerar_seo_completo(
         nome_produto=produto["nome"],
         preco=produto["preco"],
@@ -98,7 +87,6 @@ def processar_produto(produto: dict) -> bool:
         imagem_b64 = None
 
     # Monta payload para Make.com
-    board_id = board_para_categoria(categoria)
     descricao_completa = seo["descricao"] + "\n\n" + " ".join(f"#{h}" for h in seo["hashtags"])
 
     payload = {
@@ -107,7 +95,7 @@ def processar_produto(produto: dict) -> bool:
         "link": url_final,
         "plataforma": afiliado["plataforma"],
         "desconto": f"{produto['desconto_percent']}%",
-        "board_id": board_id,
+        "board_id": PINTEREST_BOARD_ID,
         "imagem_path": caminho_imagem,
         "imagem_base64": imagem_b64,
         "produto_id": produto["id"],

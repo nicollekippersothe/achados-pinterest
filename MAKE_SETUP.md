@@ -78,19 +78,16 @@ Adicione estes secrets:
 | `MAKE_WEBHOOK_URL` | URL copiada no Passo 1.2 |
 | `ML_ETIQUETA` | `kini4438918` (sua etiqueta ML Afiliados) |
 | `SHOPEE_AFFILIATE_ID` | Seu ID Shopee Afiliados (se tiver) |
-| `PINTEREST_BOARD_BELEZA` | ID do board Beleza |
-| `PINTEREST_BOARD_ELETRONICO` | ID do board Eletrônicos |
-| `PINTEREST_BOARD_MODA` | ID do board Moda |
-| `PINTEREST_BOARD_CASA` | ID do board Casa |
-| `PINTEREST_BOARD_FITNESS` | ID do board Fitness |
-| `PINTEREST_BOARD_GERAL` | ID do board padrão |
+| `PINTEREST_BOARD_ID` | URL do seu board (veja abaixo) |
 
-### Como encontrar o Board ID do Pinterest
+### Como encontrar a URL do board
 1. Abra o Pinterest no navegador
-2. Entre no board desejado
-3. A URL será: `pinterest.com/achadosdobr/nome-do-board/`
-4. Cole a URL inteira no Make.com — ele resolve automaticamente
-   OU use a API Explorer em developers.pinterest.com
+2. Clique no seu board (ex: "Achados BR")
+3. Copie a URL da barra de endereços:
+   `https://www.pinterest.com/achadosdobr/achados-br/`
+4. Cole essa URL inteira como valor do secret `PINTEREST_BOARD_ID`
+
+> **Atenção:** link de pin (`pin.it/...`) é diferente de board. O board é a "pasta" — a URL tem o formato `pinterest.com/usuario/nome-do-board/`
 
 ---
 

@@ -9,7 +9,7 @@ import os
 # AFILIADOS
 # ---------------------------------------------------------------------------
 SHOPEE_AFFILIATE_ID = os.getenv("SHOPEE_AFFILIATE_ID", "")
-ML_ETIQUETA = os.getenv("ML_ETIQUETA", "kini4438918")   # Etiqueta ML Afiliados
+ML_ETIQUETA = os.getenv("ML_ETIQUETA", "kini4438918")
 
 # ---------------------------------------------------------------------------
 # MAKE.COM — Webhook URL do seu cenário
@@ -17,10 +17,16 @@ ML_ETIQUETA = os.getenv("ML_ETIQUETA", "kini4438918")   # Etiqueta ML Afiliados
 MAKE_WEBHOOK_URL = os.getenv("MAKE_WEBHOOK_URL", "")
 
 # ---------------------------------------------------------------------------
+# PINTEREST — Um único board para tudo
+# Cole a URL do board: pinterest.com/achadosdobr/nome-do-board/
+# ---------------------------------------------------------------------------
+PINTEREST_BOARD_ID = os.getenv("PINTEREST_BOARD_ID", "")
+
+# ---------------------------------------------------------------------------
 # PRODUTOS — O que buscar automaticamente
 # ---------------------------------------------------------------------------
 
-# Categorias do Mercado Livre (IDs oficiais)
+# Categorias do Mercado Livre
 # Consulte todas: https://api.mercadolibre.com/sites/MLB/categories
 ML_CATEGORIAS = [
     "MLB1051",   # Beleza e Cuidado Pessoal
@@ -38,19 +44,6 @@ MIN_NOTA = 4.0                 # Nota mínima
 
 # Quantos pins gerar por execução (3x/dia = 15 pins/dia)
 PINS_POR_EXECUCAO = 5
-
-# ---------------------------------------------------------------------------
-# PINTEREST — Board IDs por categoria
-# Encontre seus board IDs em: https://developers.pinterest.com/tools/api-explorer/
-# ---------------------------------------------------------------------------
-PINTEREST_BOARD_IDS = {
-    "beleza":     os.getenv("PINTEREST_BOARD_BELEZA", ""),
-    "eletronico": os.getenv("PINTEREST_BOARD_ELETRONICO", ""),
-    "moda":       os.getenv("PINTEREST_BOARD_MODA", ""),
-    "casa":       os.getenv("PINTEREST_BOARD_CASA", ""),
-    "fitness":    os.getenv("PINTEREST_BOARD_FITNESS", ""),
-    "geral":      os.getenv("PINTEREST_BOARD_GERAL", ""),
-}
 
 # ---------------------------------------------------------------------------
 # CONTROLE INTERNO

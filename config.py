@@ -9,7 +9,7 @@ import os
 # AFILIADOS
 # ---------------------------------------------------------------------------
 SHOPEE_AFFILIATE_ID = os.getenv("SHOPEE_AFFILIATE_ID", "")
-ML_PUBLISHER_ID = os.getenv("ML_PUBLISHER_ID", "")
+ML_ETIQUETA = os.getenv("ML_ETIQUETA", "kini4438918")   # Etiqueta ML Afiliados
 
 # ---------------------------------------------------------------------------
 # MAKE.COM — Webhook URL do seu cenário

@@ -9,7 +9,7 @@ import urllib.error
 import sys
 from pathlib import Path
 
-from config import MAKE_WEBHOOK_URL, ML_PUBLISHER_ID, PINTEREST_BOARD_IDS
+from config import MAKE_WEBHOOK_URL, PINTEREST_BOARD_IDS
 from product_fetcher import buscar_melhores_produtos
 from seo_pinterest import gerar_seo_completo, detectar_categoria
 from image_generator import gerar_pin
@@ -62,11 +62,7 @@ def processar_produto(produto: dict) -> bool:
     afiliado = link_afiliado(produto["url"])
     plataforma = afiliado["plataforma"].lower().replace(" ", "")
 
-    # Adiciona publisher_id ML se configurado
-    url_final = afiliado["url"]
-    if plataforma == "mercadolivre" and ML_PUBLISHER_ID:
-        sep = "&" if "?" in url_final else "?"
-        url_final = f"{url_final}{sep}deal_print_id={ML_PUBLISHER_ID}"
+    url_final = afiliado["url"]   # já contém MTM_CAMPAIGN=kini4438918
 
     # SEO
     categoria = detectar_categoria(produto["nome"])

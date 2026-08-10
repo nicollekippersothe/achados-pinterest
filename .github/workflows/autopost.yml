@@ -38,7 +38,7 @@ jobs:
         env:
           MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
           SHOPEE_AFFILIATE_ID: ${{ secrets.SHOPEE_AFFILIATE_ID }}
-          ML_PUBLISHER_ID: ${{ secrets.ML_PUBLISHER_ID }}
+          ML_ETIQUETA: ${{ secrets.ML_ETIQUETA }}
           PINTEREST_BOARD_BELEZA: ${{ secrets.PINTEREST_BOARD_BELEZA }}
           PINTEREST_BOARD_ELETRONICO: ${{ secrets.PINTEREST_BOARD_ELETRONICO }}
           PINTEREST_BOARD_MODA: ${{ secrets.PINTEREST_BOARD_MODA }}

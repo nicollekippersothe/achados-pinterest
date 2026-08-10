@@ -1,0 +1,56 @@
+name: Achados BR — Autoposter Pinterest
+
+on:
+  schedule:
+    # Roda 3x por dia nos horários de pico BR (manhã, tarde, noite)
+    - cron: "0 12 * * *"   # 09:00 BRT
+    - cron: "0 18 * * *"   # 15:00 BRT
+    - cron: "0 23 * * *"   # 20:00 BRT
+  workflow_dispatch:        # Permite rodar manualmente pelo GitHub
+
+jobs:
+  autopost:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Instalar dependências
+        run: pip install Pillow python-pptx jinja2
+
+      - name: Criar pasta pins
+        run: mkdir -p pins
+
+      - name: Restaurar histórico de produtos postados
+        uses: actions/cache@v4
+        with:
+          path: pins/historico.json
+          key: historico-pins-${{ github.run_id }}
+          restore-keys: historico-pins-
+
+      - name: Rodar autoposter
+        env:
+          MAKE_WEBHOOK_URL: ${{ secrets.MAKE_WEBHOOK_URL }}
+          SHOPEE_AFFILIATE_ID: ${{ secrets.SHOPEE_AFFILIATE_ID }}
+          ML_PUBLISHER_ID: ${{ secrets.ML_PUBLISHER_ID }}
+          PINTEREST_BOARD_BELEZA: ${{ secrets.PINTEREST_BOARD_BELEZA }}
+          PINTEREST_BOARD_ELETRONICO: ${{ secrets.PINTEREST_BOARD_ELETRONICO }}
+          PINTEREST_BOARD_MODA: ${{ secrets.PINTEREST_BOARD_MODA }}
+          PINTEREST_BOARD_CASA: ${{ secrets.PINTEREST_BOARD_CASA }}
+          PINTEREST_BOARD_FITNESS: ${{ secrets.PINTEREST_BOARD_FITNESS }}
+          PINTEREST_BOARD_GERAL: ${{ secrets.PINTEREST_BOARD_GERAL }}
+        run: python autoposter.py
+
+      - name: Salvar pins gerados como artefato (opcional, para debug)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: pins-${{ github.run_number }}
+          path: pins/*.png
+          retention-days: 7

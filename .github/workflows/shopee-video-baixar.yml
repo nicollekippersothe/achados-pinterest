@@ -1,0 +1,50 @@
+name: Shopee Vídeos - baixar para a fila
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL do vídeo de creator ou do produto
+        required: true
+      legenda:
+        description: Legenda do post
+        required: true
+      link_afiliado:
+        description: Seu link de afiliado
+        required: true
+      item_id:
+        description: item_id do produto (obrigatório para vídeo de creator)
+        required: false
+
+jobs:
+  baixar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: shopee-video
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SHOPEE_UPLOAD_URL: ${{ secrets.SHOPEE_UPLOAD_URL }}
+      HEADLESS: 'true'
+      IN_URL: ${{ inputs.url }}
+      IN_LEGENDA: ${{ inputs.legenda }}
+      IN_LINK: ${{ inputs.link_afiliado }}
+      IN_ITEM: ${{ inputs.item_id }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: shopee-video/package-lock.json
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+        working-directory: .
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Restaurar sessão da Shopee
+        env:
+          STORAGE_STATE_B64: ${{ secrets.STORAGE_STATE_B64 }}
+        run: echo "$STORAGE_STATE_B64" | base64 -d > storageState.json
+      - run: npx tsx src/scripts/baixar.ts "$IN_URL" "$IN_LEGENDA" "$IN_LINK" $IN_ITEM

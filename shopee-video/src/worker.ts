@@ -85,6 +85,7 @@ async function ciclo(): Promise<boolean> {
 const UMA_VEZ = process.argv.includes('--once');
 for (;;) {
   const trabalhou = await ciclo();
-  if (UMA_VEZ) break;
+  if (UMA_VEZ && !trabalhou) break; // --once: esvazia o que der e sai
+  if (UMA_VEZ) continue;
   if (!trabalhou) await new Promise((r) => setTimeout(r, 30_000));
 }

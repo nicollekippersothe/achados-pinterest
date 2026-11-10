@@ -46,5 +46,6 @@ jobs:
       - name: Restaurar sessão da Shopee
         env:
           STORAGE_STATE_B64: ${{ secrets.STORAGE_STATE_B64 }}
-        run: echo "$STORAGE_STATE_B64" | base64 -d > storageState.json
+        run: |
+          if [ -n "$STORAGE_STATE_B64" ]; then echo "$STORAGE_STATE_B64" | base64 -d > storageState.json; fi
       - run: npx tsx src/scripts/baixar.ts "$IN_URL" "$IN_LEGENDA" "$IN_LINK" $IN_ITEM

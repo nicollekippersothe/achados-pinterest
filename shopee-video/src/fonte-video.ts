@@ -1,7 +1,7 @@
 // Abre a página do produto e captura o vídeo que o player carrega (mp4 ou m3u8).
 // Não testado contra a Shopee real. Pode pegar o vídeo do vendedor em vez do de creator.
 import { chromium } from 'playwright';
-import { existsSync } from 'node:fs';
+import { existsSync, statSync } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -15,7 +15,7 @@ export async function capturarVideo(url: string): Promise<{ arquivo: string; tit
   let alvo: string | undefined;
   let titulo = '';
   try {
-    const ctx = await browser.newContext(existsSync(config.storageState) ? { storageState: config.storageState } : {});
+    const ctx = await browser.newContext(existsSync(config.storageState) && statSync(config.storageState).size > 2 ? { storageState: config.storageState } : {});
     const page = await ctx.newPage();
     const achados: string[] = [];
     page.on('response', (r) => {

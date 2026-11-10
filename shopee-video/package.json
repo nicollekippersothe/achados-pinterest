@@ -7,6 +7,7 @@
     "login": "tsx src/scripts/login.ts",
     "add": "tsx src/scripts/add-video.ts",
     "baixar": "tsx src/scripts/baixar.ts",
+    "descobrir": "tsx src/descobrir.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

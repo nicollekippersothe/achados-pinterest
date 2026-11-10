@@ -2,7 +2,16 @@
 
 Fila de vídeos para o Shopee Vídeos: padroniza com FFmpeg e publica com o produto de afiliado vinculado.
 
-## Fluxo
+## Fluxo automático
+
+A cada rodada o `descobrir` consulta a API de Afiliados, filtra por comissão, vendas e nota
+(`MIN_COMISSAO`, `MIN_VENDAS`, `MIN_NOTA`), ignora produto já usado ou descartado, tenta capturar um
+vídeo da página do produto e, se achar, enfileira com legenda gerada e link de afiliado.
+Só roda se a fila tiver menos de `FILA_MIN` itens. Depois o worker padroniza e publica.
+Credenciais: `AFFILIATE_APP_ID` e `AFFILIATE_SECRET` (affiliate.shopee.com.br, seção de API aberta).
+Não testado com credenciais reais.
+
+## Fluxo da fila
 
 `add-video` envia o .mp4 ao Storage e cria a linha em `sv_videos` (pendente)
 → worker baixa, padroniza para 1080x1920 H.264/AAC (máx. 60s) → status `pronto`

@@ -16,4 +16,15 @@ export const config = {
   uploadUrl: () => req('SHOPEE_UPLOAD_URL'),
   headless: (process.env.HEADLESS ?? 'true') === 'true',
   bucket: 'sv-videos',
+
+  // Descoberta automática (API de Afiliados)
+  affiliateAppId: () => req('AFFILIATE_APP_ID'),
+  affiliateSecret: () => req('AFFILIATE_SECRET'),
+  keywords: (process.env.KEYWORDS ?? '').split(',').map((s) => s.trim()).filter(Boolean),
+  filaMin: Number(process.env.FILA_MIN ?? 3),          // só busca produto novo se a fila tiver menos que isso
+  porRodada: Number(process.env.DISCOVER_PER_RUN ?? 2),
+  maxCandidatos: Number(process.env.MAX_CANDIDATOS ?? 12),
+  minComissao: Number(process.env.MIN_COMISSAO ?? 0.08), // 8%
+  minVendas: Number(process.env.MIN_VENDAS ?? 100),
+  minNota: Number(process.env.MIN_NOTA ?? 4.5),
 };

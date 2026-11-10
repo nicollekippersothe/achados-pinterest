@@ -1,5 +1,7 @@
-// Uso: npm run baixar -- <url_do_produto_shopee> "<legenda>" [link_afiliado]
-// Abre a página do produto, captura o vídeo que o player carrega (mp4 ou m3u8),
+// Uso: npm run baixar -- <url_do_video_ou_produto> "<legenda>" <link_afiliado> [item_id]
+// Para URL de produto o item_id sai da própria URL. Para URL de Shopee Vídeo (creator),
+// passe o item_id do produto que você vai vincular como 4º argumento.
+// Abre a página, captura o vídeo que o player carrega (mp4 ou m3u8),
 // baixa e coloca na fila. Não testado contra a Shopee real: ajuste se o player mudar.
 import { chromium } from 'playwright';
 import { existsSync } from 'node:fs';
@@ -11,17 +13,17 @@ import { db } from '../db.js';
 import { config } from '../config.js';
 
 const run = promisify(execFile);
-const [url, legenda = '', link] = process.argv.slice(2);
+const [url, legenda = '', link, itemIdArg] = process.argv.slice(2);
 if (!url) {
-  console.error('Uso: npm run baixar -- <url_do_produto> "<legenda>" [link_afiliado]');
+  console.error('Uso: npm run baixar -- <url> "<legenda>" <link_afiliado> [item_id]');
   process.exit(1);
 }
 
 // Formatos comuns: ...-i.<shopid>.<itemid>  ou  /product/<shopid>/<itemid>
 const m = url.match(/-i\.(\d+)\.(\d+)/) ?? url.match(/\/product\/(\d+)\/(\d+)/);
-const itemId = m?.[2];
+const itemId = itemIdArg ?? m?.[2];
 if (!itemId) {
-  console.error('Não achei o item_id na URL. Use a URL completa do produto (não o link curto).');
+  console.error('Sem item_id: passe-o como 4º argumento (necessário para URL de vídeo de creator).');
   process.exit(1);
 }
 

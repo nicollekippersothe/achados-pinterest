@@ -16,7 +16,7 @@ Falhas voltam para a fila até `MAX_TENTATIVAS`, depois ficam em `erro`.
 3. `npm install` e `npx playwright install chromium`. Precisa de `ffmpeg` no PATH.
 4. `npm run login` (abre o navegador, você loga, a sessão vai para `storageState.json`).
 5. Preencha os seletores em `src/publishers/selectors.ts` com a tela real de upload.
-6. Para baixar da própria Shopee: `npm run baixar -- <url_do_produto> "legenda" <link_afiliado>` (não testado contra a Shopee real).
+6. Para baixar da própria Shopee: `npm run baixar -- <url_video_ou_produto> "legenda" <link_afiliado> [item_id]` (item_id é obrigatório para vídeo de creator) (não testado contra a Shopee real).
    Para arquivo local: `npm run add -- video.mp4 <item_id> "legenda" <link_afiliado>`
 7. `npm run worker` (ou `npx tsx src/worker.ts --once` para um ciclo, bom para cron).
 

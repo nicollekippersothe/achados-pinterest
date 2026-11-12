@@ -5,9 +5,11 @@ import { db, claim, atualizar, ultimaPublicacao, type Video } from './db.js';
 import { padronizar } from './ffmpeg.js';
 import { playwrightPublisher } from './publishers/playwright.js';
 import { apiPublisher } from './publishers/api.js';
+import { telegramPublisher } from './publishers/telegram.js';
 import { podePublicarAgora } from './agenda.js';
 
-const publisher = config.publisher === 'api' ? apiPublisher : playwrightPublisher;
+const publisher =
+  config.publisher === 'api' ? apiPublisher : config.publisher === 'playwright' ? playwrightPublisher : telegramPublisher;
 const TMP = './tmp';
 
 async function processar(v: Video) {
@@ -69,7 +71,10 @@ async function ciclo(): Promise<boolean> {
     return true;
   }
 
-  // 2) Publica um por vez, respeitando janela de horário, limite diário e intervalo mínimo
+  // 2) Publica um por vez, respeitando janela de horário, limite diário e intervalo mínimo.
+  // Se o publisher não está configurado, não mexe na fila: os vídeos ficam 'pronto' esperando, sem queimar tentativas.
+  const motivo = publisher.verificar?.();
+  if (motivo) { console.log(`Publicação desligada: ${motivo}. Vídeos ficam prontos na fila.`); return false; }
   const regra = await podePublicarAgora();
   if (!regra.ok) { console.log(`Sem publicar agora: ${regra.motivo}`); return false; }
   const ultima = await ultimaPublicacao();

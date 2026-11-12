@@ -9,6 +9,13 @@ vídeo + link da Shopee, segue o link curto só até o redirecionamento para obt
 página da Shopee), baixa o mp4 e gera o SEU link de afiliado. O link do canal nunca é reutilizado.
 Testado: leitura dos canais, resolução do item e download do mp4. Não testado de ponta a ponta com o Supabase.
 
+## Entrega pelo Telegram (publisher padrão)
+
+Com `PUBLISHER=telegram` o worker manda cada vídeo pronto para o seu Telegram (vídeo + legenda, e uma
+segunda mensagem com produto e o seu link). Você só abre o app da Shopee e posta. Respeita o mesmo limite
+diário e janela de horário. Nesse modo, status `publicado` significa "entregue no Telegram".
+Variáveis: `TELEGRAM_BOT_TOKEN` (do @BotFather) e `TELEGRAM_CHAT_ID`.
+
 ## Regra por canal
 
 Cada canal tem a sua regra em `src/canais.ts`, porque cada um escreve a legenda de um jeito:

@@ -21,7 +21,9 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       SHOPEE_UPLOAD_URL: ${{ secrets.SHOPEE_UPLOAD_URL }}
-      PUBLISHER: playwright
+      PUBLISHER: ${{ vars.PUBLISHER || 'telegram' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       HEADLESS: 'true'
       MIN_INTERVAL_MIN: '100'
       POSTS_POR_DIA: '4-5'
@@ -33,7 +35,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: shopee-video/package-lock.json
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg

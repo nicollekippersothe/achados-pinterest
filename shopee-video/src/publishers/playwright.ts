@@ -1,4 +1,5 @@
 import { chromium } from 'playwright';
+import { existsSync, statSync } from 'node:fs';
 import { config } from '../config.js';
 import type { Video } from '../db.js';
 import type { Publisher } from './types.js';
@@ -8,6 +9,13 @@ const pausa = (min = 800, max = 2200) =>
   new Promise((r) => setTimeout(r, min + Math.random() * (max - min)));
 
 export const playwrightPublisher: Publisher = {
+  verificar() {
+    if (Object.values(sel).some((v) => v.startsWith('TODO_'))) return 'seletores da tela de upload ainda não preenchidos';
+    if (!process.env.SHOPEE_UPLOAD_URL) return 'SHOPEE_UPLOAD_URL não definido';
+    if (!existsSync(config.storageState) || statSync(config.storageState).size <= 2) return 'sessão da Shopee ausente (storageState)';
+    return null;
+  },
+
   async publicar(video: Video, arquivo: string) {
     if (Object.values(sel).some((s) => s.startsWith('TODO_'))) {
       throw new Error('Seletores em src/publishers/selectors.ts ainda não foram preenchidos');

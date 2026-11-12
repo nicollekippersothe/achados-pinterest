@@ -2,7 +2,8 @@ name: Shopee Vídeos - worker
 
 on:
   schedule:
-    - cron: '0 */2 * * *'   # a cada 2 horas; o intervalo real entre posts é MIN_INTERVAL_MIN
+    # 7 rodadas por dia: 9h, 11h, 13h, 15h, 17h, 19h e 21h de Brasília (UTC-3). O limite diário e o intervalo são aplicados pelo worker.
+    - cron: '10 12,14,16,18,20,22,0 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -22,7 +23,8 @@ jobs:
       SHOPEE_UPLOAD_URL: ${{ secrets.SHOPEE_UPLOAD_URL }}
       PUBLISHER: playwright
       HEADLESS: 'true'
-      MIN_INTERVAL_MIN: '90'
+      MIN_INTERVAL_MIN: '100'
+      POSTS_POR_DIA: '4-5'
       AFFILIATE_APP_ID: ${{ secrets.AFFILIATE_APP_ID }}
       AFFILIATE_SECRET: ${{ secrets.AFFILIATE_SECRET }}
       KEYWORDS: ${{ vars.KEYWORDS }}

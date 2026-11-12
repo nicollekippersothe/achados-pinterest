@@ -5,6 +5,7 @@ import { db, claim, atualizar, ultimaPublicacao, type Video } from './db.js';
 import { padronizar } from './ffmpeg.js';
 import { playwrightPublisher } from './publishers/playwright.js';
 import { apiPublisher } from './publishers/api.js';
+import { podePublicarAgora } from './agenda.js';
 
 const publisher = config.publisher === 'api' ? apiPublisher : playwrightPublisher;
 const TMP = './tmp';
@@ -68,7 +69,9 @@ async function ciclo(): Promise<boolean> {
     return true;
   }
 
-  // 2) Publica um por vez, respeitando o intervalo mínimo
+  // 2) Publica um por vez, respeitando janela de horário, limite diário e intervalo mínimo
+  const regra = await podePublicarAgora();
+  if (!regra.ok) { console.log(`Sem publicar agora: ${regra.motivo}`); return false; }
   const ultima = await ultimaPublicacao();
   const espera = ultima ? ultima.getTime() + config.minIntervalMin * 60_000 - Date.now() : 0;
   if (espera > 0) return false;

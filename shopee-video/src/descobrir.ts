@@ -62,7 +62,7 @@ async function viaTelegram() {
           continue;
         }
         const nome = prod?.productName ?? v.nome;
-        if (!nome) { console.log(`[tg:${canal}/${post.id}] sem nome de produto, pulado`); continue; }
+        if (!nome) { motivos['sem nome (API não achou o produto)'] = (motivos['sem nome (API não achou o produto)'] ?? 0) + 1; continue; }
 
         const urlProduto = `https://shopee.com.br/product/${ids.shopId}/${ids.itemId}`;
         // Sempre o SEU link de afiliado. O link do canal nunca é reutilizado.

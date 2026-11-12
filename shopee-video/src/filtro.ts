@@ -29,6 +29,9 @@ export function classificar(post: PostTelegram): Veredito {
 
   if (ANUNCIO.test(texto)) return { ok: false, motivo: 'anúncio do canal', nome };
   if (PROMO_GENERICA.test(texto)) return { ok: false, motivo: 'promoção genérica', nome };
+  // Post só com o link (sem texto): o nome do produto virá da API de Afiliados. Sem ela, o post é pulado depois.
+  const semLinks = texto.replace(/https?:\/\/\S+/g, '').replace(/[\s\p{Extended_Pictographic}\uFE0F]/gu, '');
+  if (!nome && semLinks.length === 0) return { ok: true, motivo: 'só link (nome via API)', nome: null };
   if (!nome) return { ok: false, motivo: 'sem legenda de produto', nome };
   // Sem marcador: só aceita legenda com cara de produto (nome razoável). O link ainda precisa resolver para item.
   return nome.split(' ').length >= 3

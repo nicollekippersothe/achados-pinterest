@@ -1,0 +1,50 @@
+name: Shopee Vídeos - worker
+
+on:
+  schedule:
+    # 7 rodadas por dia: 9h, 11h, 13h, 15h, 17h, 19h e 21h de Brasília (UTC-3). O limite diário e o intervalo são aplicados pelo worker.
+    - cron: '10 12,14,16,18,20,22,0 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: shopee-video-worker
+  cancel-in-progress: false
+
+jobs:
+  worker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: shopee-video
+    env:
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SHOPEE_UPLOAD_URL: ${{ secrets.SHOPEE_UPLOAD_URL }}
+      PUBLISHER: playwright
+      HEADLESS: 'true'
+      MIN_INTERVAL_MIN: '100'
+      POSTS_POR_DIA: '4-5'
+      AFFILIATE_APP_ID: ${{ secrets.AFFILIATE_APP_ID }}
+      AFFILIATE_SECRET: ${{ secrets.AFFILIATE_SECRET }}
+      KEYWORDS: ${{ vars.KEYWORDS }}
+      FONTES: telegram
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: shopee-video/package-lock.json
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+        working-directory: .
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Restaurar sessão da Shopee
+        env:
+          STORAGE_STATE_B64: ${{ secrets.STORAGE_STATE_B64 }}
+        run: |
+          if [ -n "$STORAGE_STATE_B64" ]; then echo "$STORAGE_STATE_B64" | base64 -d > storageState.json; fi
+      - name: Descobrir produtos e vídeos (se a fila estiver baixa)
+        run: npx tsx src/descobrir.ts
+      - run: npx tsx src/worker.ts --once

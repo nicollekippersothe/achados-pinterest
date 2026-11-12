@@ -1,0 +1,23 @@
+{
+  "name": "shopee-video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "worker": "tsx src/worker.ts",
+    "login": "tsx src/scripts/login.ts",
+    "add": "tsx src/scripts/add-video.ts",
+    "baixar": "tsx src/scripts/baixar.ts",
+    "descobrir": "tsx src/descobrir.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "dotenv": "^16.4.5",
+    "playwright": "^1.48.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0"
+  }
+}

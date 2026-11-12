@@ -8,6 +8,7 @@
     "add": "tsx src/scripts/add-video.ts",
     "baixar": "tsx src/scripts/baixar.ts",
     "descobrir": "tsx src/descobrir.ts",
+    "canais": "tsx src/scripts/testar-canais.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

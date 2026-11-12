@@ -43,6 +43,10 @@ async function viaTelegram() {
     try { posts = await lerCanal(canal, config.telegramPaginas); }
     catch (e) { console.error(`[tg:${canal}] falha ao ler:`, e instanceof Error ? e.message : e); continue; }
     console.log(`[tg:${canal}] ${posts.length} posts com vídeo e link da Shopee`);
+    const aceitosAntes = posts.filter((p) => classificar(p).ok).length;
+    if (posts.length >= 10 && aceitosAntes === 0) {
+      console.warn(`[tg:${canal}] ATENÇÃO: nenhum post passou na regra do canal. O formato das legendas pode ter mudado (ver src/canais.ts).`);
+    }
 
     let tentados = 0;
     for (const post of embaralhar(posts)) {
@@ -62,7 +66,7 @@ async function viaTelegram() {
           continue;
         }
         const nome = prod?.productName ?? v.nome;
-        if (!nome) { console.log(`[tg:${canal}/${post.id}] sem nome de produto, pulado`); continue; }
+        if (!nome) { motivos['sem nome (API não achou o produto)'] = (motivos['sem nome (API não achou o produto)'] ?? 0) + 1; continue; }
 
         const urlProduto = `https://shopee.com.br/product/${ids.shopId}/${ids.itemId}`;
         // Sempre o SEU link de afiliado. O link do canal nunca é reutilizado.

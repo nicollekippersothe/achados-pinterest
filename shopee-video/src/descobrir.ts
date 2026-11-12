@@ -4,8 +4,9 @@ import { config } from './config.js';
 import { buscarProdutos, buscarPorItem, gerarLink, type Produto } from './affiliate.js';
 import { capturarVideo } from './fonte-video.js';
 import { enfileirar } from './fila.js';
-import { lerCanal, resolverProduto, nomeDoTexto, baixarVideo } from './telegram.js';
+import { lerCanal, resolverProduto, baixarVideo } from './telegram.js';
 import { gerarLegenda } from './legenda.js';
+import { classificar } from './filtro.js';
 
 const embaralhar = <T,>(a: T[]) => a.map((x) => [Math.random(), x] as const).sort((x, y) => x[0] - y[0]).map(([, x]) => x);
 
@@ -32,8 +33,8 @@ if (fila >= config.filaMin) {
   process.exit(0);
 }
 
-const ANUNCIO = /afiliado temu|lista de grupos|automa[cç][aã]o|canal vip|#publi.*(pagar|apenas r\$|por apenas)/i;
 let adicionados = 0;
+const motivos: Record<string, number> = {};
 
 async function viaTelegram() {
   for (const canal of embaralhar(config.telegramCanais)) {
@@ -46,11 +47,12 @@ async function viaTelegram() {
     let tentados = 0;
     for (const post of embaralhar(posts)) {
       if (adicionados >= config.porRodada || tentados >= config.maxCandidatos) break;
-      if (ANUNCIO.test(post.texto)) continue;
+      const v = classificar(post);
+      if (!v.ok) { motivos[v.motivo] = (motivos[v.motivo] ?? 0) + 1; continue; }
       tentados++;
       try {
         const ids = await resolverProduto(post.linkShopee);
-        if (!ids) { console.log(`[tg:${canal}/${post.id}] link não resolveu`); continue; }
+        if (!ids) { motivos['link não é de produto'] = (motivos['link não é de produto'] ?? 0) + 1; continue; }
         if (await jaVisto(ids.itemId)) continue;
 
         const prod = await buscarPorItem(ids.itemId); // pode ser null (sem oferta ou API indisponível)
@@ -59,7 +61,7 @@ async function viaTelegram() {
           console.log(`[${ids.itemId}] fora dos filtros, descartado`);
           continue;
         }
-        const nome = prod?.productName ?? nomeDoTexto(post.texto);
+        const nome = prod?.productName ?? v.nome;
         if (!nome) { console.log(`[tg:${canal}/${post.id}] sem nome de produto, pulado`); continue; }
 
         const urlProduto = `https://shopee.com.br/product/${ids.shopId}/${ids.itemId}`;
@@ -129,4 +131,4 @@ for (const fonte of config.fontes) {
   if (fonte === 'telegram') await viaTelegram();
   else if (fonte === 'api') await viaApi();
 }
-console.log(`Descoberta concluída: ${adicionados} adicionados.`);
+console.log(`Descoberta concluída: ${adicionados} adicionados. Descartados por motivo:`, motivos);

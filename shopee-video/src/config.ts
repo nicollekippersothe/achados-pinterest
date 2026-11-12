@@ -20,7 +20,7 @@ export const config = {
   // Fontes de vídeo: telegram (padrão) e/ou api (página do produto; a Shopee bloqueia IP de datacenter)
   fontes: (process.env.FONTES ?? 'telegram').split(',').map((s) => s.trim()).filter(Boolean),
   telegramCanais: (process.env.TELEGRAM_CANAIS ??
-    'achadosshopebrasil,achadinhosshopeeb,videosachadinhosshopeebr,videosdeprodutosshopee')
+    'achadosshopebrasil')
     .split(',').map((s) => s.trim()).filter(Boolean),
   telegramPaginas: Number(process.env.TELEGRAM_PAGINAS ?? 2),
 

@@ -10,6 +10,8 @@ export interface Video {
   item_id: string;
   link_afiliado: string | null;
   legenda: string;
+  produto_nome?: string | null;
+  url_produto?: string | null;
   origem_path: string;
   processado_path: string | null;
   status: string;

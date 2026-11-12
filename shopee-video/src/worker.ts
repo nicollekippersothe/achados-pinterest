@@ -5,9 +5,11 @@ import { db, claim, atualizar, ultimaPublicacao, type Video } from './db.js';
 import { padronizar } from './ffmpeg.js';
 import { playwrightPublisher } from './publishers/playwright.js';
 import { apiPublisher } from './publishers/api.js';
+import { telegramPublisher } from './publishers/telegram.js';
 import { podePublicarAgora } from './agenda.js';
 
-const publisher = config.publisher === 'api' ? apiPublisher : playwrightPublisher;
+const publisher =
+  config.publisher === 'api' ? apiPublisher : config.publisher === 'playwright' ? playwrightPublisher : telegramPublisher;
 const TMP = './tmp';
 
 async function processar(v: Video) {

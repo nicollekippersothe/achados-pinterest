@@ -21,7 +21,9 @@ jobs:
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       SHOPEE_UPLOAD_URL: ${{ secrets.SHOPEE_UPLOAD_URL }}
-      PUBLISHER: playwright
+      PUBLISHER: ${{ vars.PUBLISHER || 'telegram' }}
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       HEADLESS: 'true'
       MIN_INTERVAL_MIN: '100'
       POSTS_POR_DIA: '4-5'

@@ -69,7 +69,10 @@ async function ciclo(): Promise<boolean> {
     return true;
   }
 
-  // 2) Publica um por vez, respeitando janela de horário, limite diário e intervalo mínimo
+  // 2) Publica um por vez, respeitando janela de horário, limite diário e intervalo mínimo.
+  // Se o publisher não está configurado, não mexe na fila: os vídeos ficam 'pronto' esperando, sem queimar tentativas.
+  const motivo = publisher.verificar?.();
+  if (motivo) { console.log(`Publicação desligada: ${motivo}. Vídeos ficam prontos na fila.`); return false; }
   const regra = await podePublicarAgora();
   if (!regra.ok) { console.log(`Sem publicar agora: ${regra.motivo}`); return false; }
   const ultima = await ultimaPublicacao();

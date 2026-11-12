@@ -6,6 +6,7 @@ import type { Publisher } from './types.js';
 // para afiliado. Fluxo previsto: assinar com HMAC-SHA256, enviar em partes de 4 MB
 // com MD5, finalizar, vincular item_id e publicar.
 export const apiPublisher: Publisher = {
+  verificar: () => 'publisher api não implementado',
   async publicar() {
     throw new Error('Publisher "api" não implementado. Valide os endpoints no portal antes.');
   },

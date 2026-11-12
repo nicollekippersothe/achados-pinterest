@@ -43,6 +43,10 @@ async function viaTelegram() {
     try { posts = await lerCanal(canal, config.telegramPaginas); }
     catch (e) { console.error(`[tg:${canal}] falha ao ler:`, e instanceof Error ? e.message : e); continue; }
     console.log(`[tg:${canal}] ${posts.length} posts com vídeo e link da Shopee`);
+    const aceitosAntes = posts.filter((p) => classificar(p).ok).length;
+    if (posts.length >= 10 && aceitosAntes === 0) {
+      console.warn(`[tg:${canal}] ATENÇÃO: nenhum post passou na regra do canal. O formato das legendas pode ter mudado (ver src/canais.ts).`);
+    }
 
     let tentados = 0;
     for (const post of embaralhar(posts)) {

@@ -9,6 +9,14 @@ vídeo + link da Shopee, segue o link curto só até o redirecionamento para obt
 página da Shopee), baixa o mp4 e gera o SEU link de afiliado. O link do canal nunca é reutilizado.
 Testado: leitura dos canais, resolução do item e download do mp4. Não testado de ponta a ponta com o Supabase.
 
+## Regra por canal
+
+Cada canal tem a sua regra em `src/canais.ts`, porque cada um escreve a legenda de um jeito:
+`marcador` (frase fixa + nome), `so-link` (nome vem da API de Afiliados) ou `generico` (conservador).
+Para incluir um canal novo: rode `TELEGRAM_CANAIS=<canal> npm run canais`. Se aparecer ATENÇÃO, o canal
+precisa de uma regra própria; acrescente em `REGRAS` e rode de novo. `npm run canais` sai com erro quando
+nenhum post aproveitável é encontrado, o que também avisa se um canal mudou o formato.
+
 ## Fluxo automático
 
 A cada rodada o `descobrir` consulta a API de Afiliados, filtra por comissão, vendas e nota

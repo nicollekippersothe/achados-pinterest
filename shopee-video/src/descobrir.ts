@@ -1,9 +1,10 @@
 // Escolhe produtos sozinho, baixa um vídeo de creator da página e coloca na fila.
 import { db } from './db.js';
 import { config } from './config.js';
-import { buscarProdutos, gerarLink, type Produto } from './affiliate.js';
+import { buscarProdutos, buscarPorItem, gerarLink, type Produto } from './affiliate.js';
 import { capturarVideo } from './fonte-video.js';
 import { enfileirar } from './fila.js';
+import { lerCanal, resolverProduto, nomeDoTexto, baixarVideo } from './telegram.js';
 import { gerarLegenda } from './legenda.js';
 
 const embaralhar = <T,>(a: T[]) => a.map((x) => [Math.random(), x] as const).sort((x, y) => x[0] - y[0]).map(([, x]) => x);
@@ -31,6 +32,54 @@ if (fila >= config.filaMin) {
   process.exit(0);
 }
 
+const ANUNCIO = /afiliado temu|lista de grupos|automa[cç][aã]o|canal vip|#publi.*(pagar|apenas r\$|por apenas)/i;
+let adicionados = 0;
+
+async function viaTelegram() {
+  for (const canal of embaralhar(config.telegramCanais)) {
+    if (adicionados >= config.porRodada) return;
+    let posts;
+    try { posts = await lerCanal(canal, config.telegramPaginas); }
+    catch (e) { console.error(`[tg:${canal}] falha ao ler:`, e instanceof Error ? e.message : e); continue; }
+    console.log(`[tg:${canal}] ${posts.length} posts com vídeo e link da Shopee`);
+
+    let tentados = 0;
+    for (const post of embaralhar(posts)) {
+      if (adicionados >= config.porRodada || tentados >= config.maxCandidatos) break;
+      if (ANUNCIO.test(post.texto)) continue;
+      tentados++;
+      try {
+        const ids = await resolverProduto(post.linkShopee);
+        if (!ids) { console.log(`[tg:${canal}/${post.id}] link não resolveu`); continue; }
+        if (await jaVisto(ids.itemId)) continue;
+
+        const prod = await buscarPorItem(ids.itemId); // pode ser null (sem oferta ou API indisponível)
+        if (prod && (prod.commissionRate < config.minComissao || prod.sales < config.minVendas || prod.ratingStar < config.minNota)) {
+          await db.from('sv_descartados').upsert({ item_id: ids.itemId, motivo: 'fora dos filtros' });
+          console.log(`[${ids.itemId}] fora dos filtros, descartado`);
+          continue;
+        }
+        const nome = prod?.productName ?? nomeDoTexto(post.texto);
+        if (!nome) { console.log(`[tg:${canal}/${post.id}] sem nome de produto, pulado`); continue; }
+
+        const urlProduto = `https://shopee.com.br/product/${ids.shopId}/${ids.itemId}`;
+        // Sempre o SEU link de afiliado. O link do canal nunca é reutilizado.
+        const link = prod?.offerLink || (await gerarLink(urlProduto));
+        const arquivo = await baixarVideo(post.videoUrl);
+        const id = await enfileirar({
+          arquivo, itemId: ids.itemId, legenda: gerarLegenda({ productName: nome }), linkAfiliado: link,
+          produtoNome: nome, urlProduto, preco: prod?.price, comissaoPct: prod?.commissionRate,
+        });
+        adicionados++;
+        console.log(`[${ids.itemId}] na fila (${id}) via ${canal}: ${nome}`);
+      } catch (e) {
+        console.error(`[tg:${canal}/${post.id}] erro:`, e instanceof Error ? e.message : e);
+      }
+    }
+  }
+}
+
+async function viaApi() {
 const kw = config.keywords.length ? config.keywords[Math.floor(Math.random() * config.keywords.length)] : undefined;
 const pagina = 1 + Math.floor(Math.random() * 3);
 console.log(`Buscando produtos (palavra: ${kw ?? 'geral'}, página ${pagina})`);
@@ -41,7 +90,6 @@ const bons: Produto[] = todos.filter(
 );
 console.log(`${todos.length} produtos, ${bons.length} passam nos filtros`);
 
-let adicionados = 0;
 let tentados = 0;
 for (const p of embaralhar(bons)) {
   if (adicionados >= config.porRodada || tentados >= config.maxCandidatos) break;
@@ -73,4 +121,12 @@ for (const p of embaralhar(bons)) {
     console.error(`[${p.itemId}] erro:`, e instanceof Error ? e.message : e);
   }
 }
-console.log(`Descoberta concluída: ${adicionados} adicionados, ${tentados} tentados.`);
+console.log(`[api] ${tentados} tentados.`);
+}
+
+for (const fonte of config.fontes) {
+  if (adicionados >= config.porRodada) break;
+  if (fonte === 'telegram') await viaTelegram();
+  else if (fonte === 'api') await viaApi();
+}
+console.log(`Descoberta concluída: ${adicionados} adicionados.`);

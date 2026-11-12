@@ -64,3 +64,22 @@ export async function gerarLink(urlOriginal: string): Promise<string> {
   const d = await gql<{ generateShortLink: { shortLink: string } }>(q);
   return d.generateShortLink.shortLink;
 }
+
+/** Consulta um produto específico. Retorna null se não houver oferta de afiliado ou se a consulta falhar. */
+export async function buscarPorItem(itemId: string): Promise<Produto | null> {
+  try {
+    const q = `{ productOfferV2(itemId: ${Number(itemId)}, limit: 1) {
+      nodes { itemId shopId productName price sales ratingStar commissionRate offerLink productLink } } }`;
+    const d = await gql<{ productOfferV2: { nodes: Record<string, string>[] } }>(q);
+    const n = d.productOfferV2.nodes[0];
+    if (!n) return null;
+    return {
+      itemId: String(n.itemId), shopId: String(n.shopId), productName: n.productName,
+      price: Number(n.price), sales: Number(n.sales), ratingStar: Number(n.ratingStar),
+      commissionRate: Number(n.commissionRate), offerLink: n.offerLink, productLink: n.productLink,
+    };
+  } catch (e) {
+    console.warn(`consulta por item ${itemId} falhou:`, e instanceof Error ? e.message : e);
+    return null;
+  }
+}

@@ -26,6 +26,7 @@ jobs:
       AFFILIATE_APP_ID: ${{ secrets.AFFILIATE_APP_ID }}
       AFFILIATE_SECRET: ${{ secrets.AFFILIATE_SECRET }}
       KEYWORDS: ${{ vars.KEYWORDS }}
+      FONTES: telegram
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

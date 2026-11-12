@@ -17,6 +17,13 @@ export const config = {
   headless: (process.env.HEADLESS ?? 'true') === 'true',
   bucket: 'sv-videos',
 
+  // Fontes de vídeo: telegram (padrão) e/ou api (página do produto; a Shopee bloqueia IP de datacenter)
+  fontes: (process.env.FONTES ?? 'telegram').split(',').map((s) => s.trim()).filter(Boolean),
+  telegramCanais: (process.env.TELEGRAM_CANAIS ??
+    'achadosshopebrasil,achadinhosshopeeb,videosachadinhosshopeebr,videosdeprodutosshopee')
+    .split(',').map((s) => s.trim()).filter(Boolean),
+  telegramPaginas: Number(process.env.TELEGRAM_PAGINAS ?? 2),
+
   // Descoberta automática (API de Afiliados)
   affiliateAppId: () => req('AFFILIATE_APP_ID'),
   affiliateSecret: () => req('AFFILIATE_SECRET'),

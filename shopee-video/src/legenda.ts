@@ -1,4 +1,3 @@
-import type { Produto } from './affiliate.js';
 
 const aberturas = [
   'Achadinho da Shopee que vale ver 👇',
@@ -14,7 +13,7 @@ const fechos = [
 
 const pick = <T,>(a: T[]) => a[Math.floor(Math.random() * a.length)]!;
 
-export function gerarLegenda(p: Produto): string {
+export function gerarLegenda(p: { productName: string }): string {
   const nome = p.productName.length > 70 ? p.productName.slice(0, 67).trimEnd() + '...' : p.productName;
   return `${pick(aberturas)}\n${nome}\n${pick(fechos)}\n#shopee #achadosshopee #shopeevideos #achadinhos`;
 }

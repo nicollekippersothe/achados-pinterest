@@ -2,6 +2,13 @@
 
 Fila de vídeos para o Shopee Vídeos: padroniza com FFmpeg e publica com o produto de afiliado vinculado.
 
+## Fonte Telegram (padrão)
+
+Lê o preview público de canais de vídeos para afiliados (`t.me/s/<canal>`), sem login. Pega posts com
+vídeo + link da Shopee, segue o link curto só até o redirecionamento para obter `shopId/itemId` (não abre
+página da Shopee), baixa o mp4 e gera o SEU link de afiliado. O link do canal nunca é reutilizado.
+Testado: leitura dos canais, resolução do item e download do mp4. Não testado de ponta a ponta com o Supabase.
+
 ## Fluxo automático
 
 A cada rodada o `descobrir` consulta a API de Afiliados, filtra por comissão, vendas e nota

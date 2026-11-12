@@ -25,7 +25,7 @@ jobs:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       HEADLESS: 'true'
-      MIN_INTERVAL_MIN: '100'
+      MIN_INTERVAL_MIN: '30'
       POSTS_POR_DIA: '4-5'
       AFFILIATE_APP_ID: ${{ secrets.AFFILIATE_APP_ID }}
       AFFILIATE_SECRET: ${{ secrets.AFFILIATE_SECRET }}

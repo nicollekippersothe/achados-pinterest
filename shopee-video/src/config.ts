@@ -10,7 +10,7 @@ export const config = {
   supabaseUrl: () => req('SUPABASE_URL'),
   supabaseKey: () => req('SUPABASE_SERVICE_ROLE_KEY'),
   publisher: (process.env.PUBLISHER ?? 'telegram') as 'api' | 'playwright' | 'telegram',
-  minIntervalMin: Number(process.env.MIN_INTERVAL_MIN ?? 100),
+  minIntervalMin: Number(process.env.MIN_INTERVAL_MIN ?? 30),
   maxTentativas: Number(process.env.MAX_TENTATIVAS ?? 3),
   storageState: process.env.STORAGE_STATE ?? './storageState.json',
   uploadUrl: () => req('SHOPEE_UPLOAD_URL'),

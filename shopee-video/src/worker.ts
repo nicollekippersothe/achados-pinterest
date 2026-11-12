@@ -6,7 +6,7 @@ import { padronizar } from './ffmpeg.js';
 import { playwrightPublisher } from './publishers/playwright.js';
 import { apiPublisher } from './publishers/api.js';
 import { telegramPublisher } from './publishers/telegram.js';
-import { podePublicarAgora } from './agenda.js';
+import { garantirAgenda, slotVencido, proximoHorario, marcarFeito } from './agenda.js';
 
 const publisher =
   config.publisher === 'api' ? apiPublisher : config.publisher === 'playwright' ? playwrightPublisher : telegramPublisher;
@@ -75,15 +75,21 @@ async function ciclo(): Promise<boolean> {
   // Se o publisher não está configurado, não mexe na fila: os vídeos ficam 'pronto' esperando, sem queimar tentativas.
   const motivo = publisher.verificar?.();
   if (motivo) { console.log(`Publicação desligada: ${motivo}. Vídeos ficam prontos na fila.`); return false; }
-  const regra = await podePublicarAgora();
-  if (!regra.ok) { console.log(`Sem publicar agora: ${regra.motivo}`); return false; }
+  await garantirAgenda();
+  const slot = await slotVencido();
+  if (!slot) {
+    const prox = await proximoHorario();
+    console.log(`Nenhum horário vencido agora.${prox ? ` Próximo: ${prox} (Brasília).` : ' Sem mais horários hoje.'}`);
+    return false;
+  }
+  // Horários atrasados (computador desligado) saem um por vez, com um intervalo curto entre eles.
   const ultima = await ultimaPublicacao();
   const espera = ultima ? ultima.getTime() + config.minIntervalMin * 60_000 - Date.now() : 0;
   if (espera > 0) return false;
 
   const v = await claim('pronto', 'publicando');
   if (v) {
-    try { await publicar(v); console.log(`[${v.id}] publicado`); }
+    try { await publicar(v); await marcarFeito(slot.id, v.id); console.log(`[${v.id}] publicado (horário ${slot.ordem} da agenda)`); }
     catch (e) { await falhou(v, e, 'pronto'); }
     return true;
   }

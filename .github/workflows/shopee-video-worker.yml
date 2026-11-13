@@ -2,8 +2,9 @@ name: Shopee Vídeos - worker
 
 on:
   schedule:
-    # 7 rodadas por dia: 9h, 11h, 13h, 15h, 17h, 19h e 21h de Brasília (UTC-3). O limite diário e o intervalo são aplicados pelo worker.
-    - cron: '10 12,14,16,18,20,22,0 * * *'
+    # 1 rodada por hora, de 9h10 a 21h10 de Brasília (UTC-3). O GitHub atrasa agendamentos, então a margem é grande.
+    # Os horários de postagem vêm da agenda (sv_agenda); a rodada só publica o que já venceu.
+    - cron: '10 12-23,0 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -41,7 +42,6 @@ jobs:
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
         working-directory: .
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       - name: Restaurar sessão da Shopee
         env:
           STORAGE_STATE_B64: ${{ secrets.STORAGE_STATE_B64 }}

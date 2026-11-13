@@ -57,7 +57,7 @@ while ($true) {
 
     Add-Content -Path $passos -Value ("{0} | acao: {1} | xml: {2} | {3}" -f $id, $acao, $okXml, $focoTxt) -Encoding UTF8
     if ($okXml) { Write-Host "  tela $id guardada." -ForegroundColor Green }
-    else { Write-Host "  tela $id: print guardado, mas a estrutura (XML) falhou. Se for tela com video rodando, pause e tente de novo." -ForegroundColor Yellow }
+    else { Write-Host "  tela ${id}: print guardado, mas a estrutura (XML) falhou. Se for tela com video rodando, pause e tente de novo." -ForegroundColor Yellow }
 }
 
 $zip = "$pasta.zip"

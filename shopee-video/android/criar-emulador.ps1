@@ -1,5 +1,5 @@
 # Cria o aparelho virtual "shopee" (Pixel 6, Android 14 com Google Play) no Windows.
-# Pré-requisito: Android Studio instalado e aberto pelo menos uma vez (assistente inicial concluído).
+# Pre-requisito: Android Studio instalado e aberto pelo menos uma vez (assistente inicial concluido).
 # Como rodar (PowerShell):  powershell -ExecutionPolicy Bypass -File .\criar-emulador.ps1
 
 $ErrorActionPreference = 'Stop'
@@ -13,7 +13,7 @@ $nucleos = 4
 function Passo($t) { Write-Host "`n==> $t" -ForegroundColor Cyan }
 
 if (-not (Test-Path $sdk)) {
-    throw "SDK do Android não encontrado em $sdk. Abra o Android Studio e conclua o assistente de instalação (Standard)."
+    throw "SDK do Android nao encontrado em $sdk. Abra o Android Studio e conclua o assistente de instalacao (Standard)."
 }
 
 # Java: o Android Studio traz um embutido (JBR). O sdkmanager precisa dele.
@@ -22,7 +22,7 @@ if (-not $env:JAVA_HOME) {
         if (Test-Path $c) { $env:JAVA_HOME = $c; break }
     }
 }
-if (-not $env:JAVA_HOME) { throw 'Java não encontrado. Reinstale o Android Studio ou defina a variável JAVA_HOME.' }
+if (-not $env:JAVA_HOME) { throw 'Java nao encontrado. Reinstale o Android Studio ou defina a variavel JAVA_HOME.' }
 
 # 1) Ferramentas de linha de comando (sdkmanager e avdmanager)
 Passo 'Verificando ferramentas de linha de comando'
@@ -35,7 +35,7 @@ if (-not (Test-Path $sdkmanager)) {
     try {
         Invoke-WebRequest 'https://dl.google.com/android/repository/commandlinetools-win-11076708_latest.zip' -OutFile $zip
     } catch {
-        throw 'Falhou o download. Alternativa: no Android Studio vá em Settings > Languages & Frameworks > Android SDK > SDK Tools, marque "Android SDK Command-line Tools (latest)" e clique em Apply. Depois rode este script de novo.'
+        throw 'Falhou o download. Alternativa: no Android Studio va em Settings > Languages & Frameworks > Android SDK > SDK Tools, marque "Android SDK Command-line Tools (latest)" e clique em Apply. Depois rode este script de novo.'
     }
     if (Test-Path $tmp) { Remove-Item $tmp -Recurse -Force }
     Expand-Archive $zip -DestinationPath $tmp
@@ -43,8 +43,8 @@ if (-not (Test-Path $sdkmanager)) {
     Move-Item (Join-Path $tmp 'cmdline-tools') (Join-Path $sdk 'cmdline-tools\latest')
 }
 
-# 2) Licenças e componentes
-Passo 'Aceitando licenças'
+# 2) Licencas e componentes
+Passo 'Aceitando licencas'
 (1..30 | ForEach-Object { 'y' }) | & $sdkmanager --licenses | Out-Null
 
 Passo 'Instalando emulador, ferramentas e imagem do Android 14 (download grande, pode demorar)'
@@ -56,10 +56,10 @@ Passo "Criando o aparelho virtual '$nome'"
 'no' | & $avdmanager create avd -n $nome -k $imagem -d pixel_6 --force
 if ($LASTEXITCODE -ne 0) { throw 'Falha ao criar o aparelho virtual.' }
 
-# 4) Ajustes de memória e CPU
-Passo 'Ajustando memória e CPU'
+# 4) Ajustes de memoria e CPU
+Passo 'Ajustando memoria e CPU'
 $ini = Join-Path $env:USERPROFILE ".android\avd\$nome.avd\config.ini"
-if (-not (Test-Path $ini)) { throw "Não achei $ini" }
+if (-not (Test-Path $ini)) { throw "Nao achei $ini" }
 $ajustes = [ordered]@{
     'hw.ramSize'                = "$ramMB"
     'hw.cpu.ncore'              = "$nucleos"
@@ -75,7 +75,7 @@ foreach ($k in $ajustes.Keys) {
 }
 Set-Content -Path $ini -Value $linhas -Encoding ASCII
 
-# 5) ADB no PATH do usuário
+# 5) ADB no PATH do usuario
 Passo 'Colocando o adb no PATH'
 $pt = Join-Path $sdk 'platform-tools'
 $pathUsuario = [Environment]::GetEnvironmentVariable('Path', 'User')
@@ -84,8 +84,8 @@ if ($pathUsuario -notlike "*$pt*") {
     Write-Host 'adb adicionado. Feche e abra o PowerShell para valer.'
 }
 
-# 6) Verificar aceleração (virtualização)
-Passo 'Verificando a virtualização'
+# 6) Verificar aceleracao (virtualizacao)
+Passo 'Verificando a virtualizacao'
 & (Join-Path $sdk 'emulator\emulator.exe') -accel-check
 
 Write-Host "`nPRONTO. Aparelho '$nome' criado." -ForegroundColor Green
